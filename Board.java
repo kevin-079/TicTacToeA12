@@ -6,20 +6,20 @@ public class Board {
     // Define named constants
     public static  int ROWS;  // ROWS x COLS cells
     public static  int COLS;
-    public void setupGame(String gameType) {
+    /*public void setupGame(String gameType) {
         if (gameType.equals("Tic-Tac-Toe")) {
-            ROWS = 3;
-            COLS = 3;
+            this.ROWS = 3;
+            this.COLS = 3;
         } else if (gameType.equals("Connect Four")) {
-            ROWS = 6;
-            COLS = 7;
+            this.ROWS = 6;
+            this.COLS = 7;
         }
         initGame();
-    }
+    }*/
 
     // Define named constants for drawing
-    public static final int CANVAS_WIDTH = Cell.SIZE * COLS;  // the drawing canvas
-    public static final int CANVAS_HEIGHT = Cell.SIZE * ROWS;
+    public static int CANVAS_WIDTH;  // the drawing canvas
+    public static int CANVAS_HEIGHT;
     public static final int GRID_WIDTH = 8;  // Grid-line's width
     public static final int GRID_WIDTH_HALF = GRID_WIDTH / 2; // Grid-line's half-width
     public static final Color COLOR_GRID = Color.LIGHT_GRAY;  // grid lines
@@ -30,13 +30,24 @@ public class Board {
     Cell[][] cells;
 
     /** Constructor to initialize the game board */
-    public Board() {
+    public Board(String gameType) {
+        if (gameType.equals("Tic-Tac-Toe")) {
+            this.ROWS = 3;
+            this.COLS = 3;
+        } else if (gameType.equals("Connect Four")) {
+            this.ROWS = 6;
+            this.COLS = 7;
+        }
+        CANVAS_WIDTH = Cell.SIZE * COLS;
+        CANVAS_HEIGHT = Cell.SIZE * ROWS;
         initGame();
     }
 
     /** Initialize the game objects (run once) */
     public void initGame() {
         cells = new Cell[ROWS][COLS]; // allocate the array
+        System.out.println(ROWS);
+        System.out.println(COLS);
         for (int row = 0; row < ROWS; ++row) {
             for (int col = 0; col < COLS; ++col) {
                 // Allocate element of the array

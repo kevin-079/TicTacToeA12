@@ -23,8 +23,9 @@ public class GameMain extends JPanel {
 
     /** Constructor to setup the game UI and initialize components */
     public GameMain(String gameType) {
-        board = new Board(); // Initialize the game board
-        board.setupGame(gameType); // Dynamically setup the board
+
+        board = new Board(gameType); // Initialize the game board
+        //board.setupGame(gameType); // Dynamically setup the board
 
         // Set up the UI
         setLayout(new BorderLayout());
@@ -32,12 +33,13 @@ public class GameMain extends JPanel {
         statusBar.setFont(FONT_STATUS);
         statusBar.setBackground(COLOR_BG_STATUS);
         statusBar.setOpaque(true);
-        statusBar.setPreferredSize(new Dimension(300, 30));
+        statusBar.setPreferredSize(new Dimension(30, 30));
         statusBar.setHorizontalAlignment(JLabel.LEFT);
         statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 12));
         add(statusBar, BorderLayout.SOUTH);
 
-        setPreferredSize(new Dimension(Cell.SIZE * Board.COLS, Cell.SIZE * Board.ROWS + 30));
+        super.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
+        System.out.println(Board.CANVAS_WIDTH);
 
         addMouseListener(new MouseAdapter() {
             @Override
