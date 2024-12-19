@@ -20,12 +20,19 @@ public class GameMain extends JPanel {
     private State currentState;  // the current state of the game
     private Seed currentPlayer;  // the current player
     private JLabel statusBar;    // for displaying status message
+    private int gameTypeWin;     // for saving the win condition gametype
 
     /** Constructor to setup the game UI and initialize components */
     public GameMain(String gameType) {
 
         board = new Board(gameType); // Initialize the game board
         //board.setupGame(gameType); // Dynamically setup the board
+
+        if(gameType.equals("Tic-Tac-Toe")) {
+            this.gameTypeWin = 3;
+        } else if(gameType.equals("Connect Four")) {
+            this.gameTypeWin = 4;
+        }
 
 
         // Set up the UI
@@ -37,9 +44,12 @@ public class GameMain extends JPanel {
         statusBar.setPreferredSize(new Dimension(30, 30));
         statusBar.setHorizontalAlignment(JLabel.LEFT);
         statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 12));
-        add(statusBar, BorderLayout.SOUTH);
 
+
+        super.setLayout(new BorderLayout());
+        super.add(statusBar, BorderLayout.SOUTH);
         super.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
+        super.setBorder(BorderFactory.createLineBorder(COLOR_BG_STATUS, 2, false));
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -125,52 +135,55 @@ public class GameMain extends JPanel {
             statusBar.setText("O Won! Click to restart.");
         }
     }
-    private boolean hasWon(Seed player, int row, int col) {
+    private boolean hasWon(Seed player, int rowSelected, int colSelected) {
         // Cek horizontal
-        boolean horizontalWin = true;
-        for (int c = 0; c < Board.COLS; c++) {
-            if (board.cells[row][c].content != player) {
-                horizontalWin = false;
-                break;
+        boolean win = false;
+        int count = 0;
+        for (int col = 0; col < Board.COLS; col++) {
+            if (board.cells[rowSelected][col].content == player) {
+                count++;
+                if (count == gameTypeWin) return true; // 3 atau 4-in-a-row ditemukan
+            } else {
+                count = 0;
             }
         }
-        if (horizontalWin) return true;
 
-        // Cek vertikal
-        boolean verticalWin = true;
-        for (int r = 0; r < Board.ROWS; r++) {
-            if (board.cells[r][col].content != player) {
-                verticalWin = false;
-                break;
+        // Vertical check
+        count = 0;
+        for (int row = 0; row < Board.ROWS; row++) {
+            if (board.cells[row][colSelected].content == player) {
+                count++;
+                if (count == gameTypeWin) return true; // 3 atau 4-in-a-column ditemukan
+            } else {
+                count = 0;
             }
         }
-        if (verticalWin) return true;
 
-        // Cek diagonal utama (kiri atas ke kanan bawah)
-        if (row == col) { // Hanya cek jika baris dan kolom sama
-            boolean diagonalWin = true;
-            for (int i = 0; i < Board.ROWS; i++) {
-                if (board.cells[i][i].content != player) {
-                    diagonalWin = false;
-                    break;
-                }
+        // Diagonal (top-left to bottom-right)
+        count = 0;
+        for (int i = -3; i <= 3; i++) {
+            int r = rowSelected + i, c = colSelected + i;
+            if (r >= 0 && r < Board.ROWS && c >= 0 && c < Board.COLS && board.cells[r][c].content == player) {
+                count++;
+                if (count == gameTypeWin) return true;
+            } else {
+                count = 0;
             }
-            if (diagonalWin) return true;
         }
 
-        // Cek diagonal sekunder (kanan atas ke kiri bawah)
-        if (row + col == Board.ROWS - 1) { // Hanya cek jika baris + kolom = ukuran papan - 1
-            boolean antiDiagonalWin = true;
-            for (int i = 0; i < Board.ROWS; i++) {
-                if (board.cells[i][Board.COLS - 1 - i].content != player) {
-                    antiDiagonalWin = false;
-                    break;
-                }
+        // Anti-diagonal (top-right to bottom-left)
+        count = 0;
+        for (int i = -3; i <= 3; i++) {
+            int r = rowSelected + i, c = colSelected - i;
+            if (r >= 0 && r < Board.ROWS && c >= 0 && c < Board.COLS && board.cells[r][c].content == player) {
+                count++;
+                if (count == gameTypeWin) return true;
+            } else {
+                count = 0;
             }
-            if (antiDiagonalWin) return true;
         }
 
-        return false; // Tidak ada kondisi kemenangan
+        return false; // Tidak ada kondisi kemenangan ditemukan
     }
 
 
