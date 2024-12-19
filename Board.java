@@ -4,8 +4,19 @@ import java.awt.*;
  */
 public class Board {
     // Define named constants
-    public static final int ROWS = 3;  // ROWS x COLS cells
-    public static final int COLS = 3;
+    public static  int ROWS;  // ROWS x COLS cells
+    public static  int COLS;
+    public void setupGame(String gameType) {
+        if (gameType.equals("Tic-Tac-Toe")) {
+            ROWS = 3;
+            COLS = 3;
+        } else if (gameType.equals("Connect Four")) {
+            ROWS = 6;
+            COLS = 7;
+        }
+        initGame();
+    }
+
     // Define named constants for drawing
     public static final int CANVAS_WIDTH = Cell.SIZE * COLS;  // the drawing canvas
     public static final int CANVAS_HEIGHT = Cell.SIZE * ROWS;
