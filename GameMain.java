@@ -78,25 +78,33 @@ public class GameMain extends JPanel {
 
     /** Handle mouse click event */
     private void handleMouseClick(int mouseX, int mouseY) {
-        int colSelected = mouseX / Cell.SIZE; // Determine column clicked
+        int row = mouseY / Cell.SIZE; // Hitung baris
+        int col = mouseX / Cell.SIZE; // Hitung kolom
+
+        // Debugging untuk memastikan perhitungan benar
+        System.out.println("MouseX: " + mouseX + ", MouseY: " + mouseY);
+        System.out.println("Klik di Baris: " + row + ", Kolom: " + col);
+
         if (currentState == State.PLAYING) {
-            // Place token in the lowest empty row of the clicked column
-            if (colSelected >= 0 && colSelected < Board.COLS) {
-                // Look for an empty cell starting from the bottom row
-                for (int row = Board.ROWS -1; row >= 0; row--) {
-                    if (board.cells[row][colSelected].content == Seed.NO_SEED) {
-                        board.cells[row][colSelected].content = currentPlayer; // Make a move
-                        currentState = updateGame(currentPlayer, row, colSelected); // update state
-                        // Switch player
-                        currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
-                        break;
-                    }
+            // Validasi apakah klik berada dalam grid
+            if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS) {
+                // Periksa apakah sel kosong
+                if (board.cells[row][col].content == Seed.NO_SEED) {
+                    // Update simbol di sel
+                    board.cells[row][col].content = currentPlayer;
+                    // Perbarui state permainan
+                    currentState = updateGame(currentPlayer, row, col);
+                    // Ganti pemain
+                    currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                    // Perbarui GUI
+                    repaint();
+                    return; // Hentikan setelah simbol ditempatkan
                 }
             }
-        } else {
-            newGame(); // Restart the game
+        } else { // Jika game selesai
+            newGame(); // Mulai game baru
         }
-        repaint(); // Redraw the board
+        SwingUtilities.invokeLater(() -> repaint()); // Redraw the board
         updateStatusBar();
     }
 
