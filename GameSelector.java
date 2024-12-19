@@ -27,6 +27,8 @@ public class GameSelector extends JPanel {
         tttButton.setFocusPainted(false); // Hilangkan highlight saat klik
         tttButton.addActionListener((ActionEvent e) -> {
             parentFrame.setContentPane(new GameMain("Tic-Tac-Toe"));
+            parentFrame.pack();
+            parentFrame.setLocationRelativeTo(null);
             parentFrame.validate();
         });
 
@@ -38,13 +40,14 @@ public class GameSelector extends JPanel {
         cfButton.setFocusPainted(false);
         cfButton.addActionListener((ActionEvent e) -> {
             parentFrame.setContentPane(new GameMain("Connect Four"));
+            parentFrame.pack();
+            parentFrame.setLocationRelativeTo(null);
             parentFrame.validate();
         });
 
         // Tambahkan tombol ke panel
         buttonPanel.add(tttButton);
         buttonPanel.add(cfButton);
-
         // Tambahkan komponen ke panel utama
         add(welcomeLabel, BorderLayout.NORTH); // Judul di atas
         add(buttonPanel, BorderLayout.CENTER); // Tombol di tengah
