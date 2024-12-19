@@ -26,7 +26,7 @@ public class GameSelector extends JPanel {
         tttButton.setForeground(Color.WHITE);
         tttButton.setFocusPainted(false); // Hilangkan highlight saat klik
         tttButton.addActionListener((ActionEvent e) -> {
-            parentFrame.setContentPane(new GameMain("Tic-Tac-Toe"));
+            parentFrame.setContentPane(new tttOption(parentFrame));
             parentFrame.pack();
             parentFrame.setLocationRelativeTo(null);
             parentFrame.validate();
@@ -52,4 +52,5 @@ public class GameSelector extends JPanel {
         add(welcomeLabel, BorderLayout.NORTH); // Judul di atas
         add(buttonPanel, BorderLayout.CENTER); // Tombol di tengah
     }
+
 }
