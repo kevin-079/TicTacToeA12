@@ -14,11 +14,13 @@ public class GameSelector extends JPanel {
 
         tttButton.addActionListener((ActionEvent e) -> {
             parentFrame.setContentPane(new GameMain("Tic-Tac-Toe"));
+            parentFrame.pack();
             parentFrame.validate();
         });
 
         cfButton.addActionListener((ActionEvent e) -> {
             parentFrame.setContentPane(new GameMain("Connect Four"));
+            parentFrame.pack();
             parentFrame.validate();
         });
 
