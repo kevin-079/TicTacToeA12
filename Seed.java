@@ -27,6 +27,7 @@ public enum Seed {   // to save as "Seed.java"
     private Seed(String name, String imageFilename) {
         this.displayName = name;
 
+
         if (imageFilename != null) {
             URL imgURL = getClass().getClassLoader().getResource(imageFilename);
             ImageIcon icon = null;

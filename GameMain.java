@@ -39,7 +39,6 @@ public class GameMain extends JPanel {
         add(statusBar, BorderLayout.SOUTH);
 
         super.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
-        System.out.println(Board.CANVAS_WIDTH);
 
         addMouseListener(new MouseAdapter() {
             @Override
