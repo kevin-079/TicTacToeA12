@@ -27,6 +27,7 @@ public class GameMain extends JPanel {
         board = new Board(gameType); // Initialize the game board
         //board.setupGame(gameType); // Dynamically setup the board
 
+
         // Set up the UI
         setLayout(new BorderLayout());
         statusBar = new JLabel("       ");
