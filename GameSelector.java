@@ -26,10 +26,29 @@ public class GameSelector extends JPanel {
         tttButton.setForeground(Color.WHITE);
         tttButton.setFocusPainted(false); // Hilangkan highlight saat klik
         tttButton.addActionListener((ActionEvent e) -> {
-            parentFrame.setContentPane(new tttOption(parentFrame));
-            parentFrame.pack();
-            parentFrame.setLocationRelativeTo(null);
-            parentFrame.validate();
+            // Dialog untuk memilih mode permainan
+            int response = JOptionPane.showOptionDialog(
+                    parentFrame,
+                    "Pilih mode permainan untuk Tic-Tac-Toe:",
+                    "Mode Permainan",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new Object[] {"1P (vs AI)", "2P (vs Player)"},
+                    "1P (vs AI)"
+            );
+
+            if (response == 0) { // Mode 1P (vs AI)
+                parentFrame.setContentPane(new TTTGraphics(true)); // true untuk AI
+                parentFrame.pack();
+                parentFrame.setLocationRelativeTo(null);
+                parentFrame.validate();
+            } else if (response == 1) { // Mode 2P (vs Player)
+                parentFrame.setContentPane(new tttOption(parentFrame)); // Masuk ke opsi 2P
+                parentFrame.pack();
+                parentFrame.setLocationRelativeTo(null);
+                parentFrame.validate();
+            }
         });
 
         // Tombol untuk Connect Four
@@ -52,5 +71,4 @@ public class GameSelector extends JPanel {
         add(welcomeLabel, BorderLayout.NORTH); // Judul di atas
         add(buttonPanel, BorderLayout.CENTER); // Tombol di tengah
     }
-
 }
