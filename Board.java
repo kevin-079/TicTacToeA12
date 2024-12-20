@@ -31,9 +31,12 @@ public class Board {
 
     /** Constructor to initialize the game board */
     public Board(String gameType) {
-        if (gameType.equals("Tic-Tac-Toe")) {
+        if (gameType.equals("Tic-Tac-Toe 3x3")) {
             this.ROWS = 3;
             this.COLS = 3;
+        } else if (gameType.equals("Tic-Tac-Toe 5x5")) {
+            this.ROWS = 5;
+            this.COLS = 5;
         } else if (gameType.equals("Connect Four")) {
             this.ROWS = 6;
             this.COLS = 7;
@@ -46,8 +49,11 @@ public class Board {
     /** Initialize the game objects (run once) */
     public void initGame() {
         cells = new Cell[ROWS][COLS]; // allocate the array
-        System.out.println(ROWS);
-        System.out.println(COLS);
+
+        //cek nilai kolom dan baris
+        //System.out.println(ROWS);
+        //System.out.println(COLS);
+
         for (int row = 0; row < ROWS; ++row) {
             for (int col = 0; col < COLS; ++col) {
                 // Allocate element of the array

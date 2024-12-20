@@ -29,9 +29,6 @@ public class TTTGraphics extends JFrame {
 
     private boolean aiEnabled; // Flag for AI mode
 
-    public enum State {
-        PLAYING, DRAW, CROSS_WON, NOUGHT_WON
-    }
     private State currentState;
 
     public enum Seed {
@@ -71,7 +68,25 @@ public class TTTGraphics extends JFrame {
                         }
                     }
                 } else {
-                    newGame();
+                    Window[] windows = Window.getWindows();
+                    for (Window window : windows) {
+                        // Check if the window is an instance of JFrame
+                        if (window instanceof JFrame) {
+                            // Dispose of the JFrame
+                            window.dispose();
+                            break; // Exit after disposing the first JFrame found
+                        }
+                    }
+
+
+                    SwingUtilities.invokeLater(() -> {
+                        JFrame frame = new JFrame();
+                        frame.setContentPane(new GameSelector(frame, currentState, 1)); // GameSelector directs to GameMain
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        frame.pack();
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                    });
                 }
                 repaint();
             }
@@ -90,6 +105,7 @@ public class TTTGraphics extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
+        setLocationRelativeTo(null);
         setTitle("Tic Tac Toe");
         setVisible(true);
 

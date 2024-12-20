@@ -20,7 +20,8 @@ public class GameMain extends JPanel {
     private State currentState;  // the current state of the game
     private Seed currentPlayer;  // the current player
     private JLabel statusBar;    // for displaying status message
-    private int gameTypeWin;     // for saving the win condition gametype
+    private int gameType;        // for saving the type of gametype
+    private int winCon;          // for saving the win condition of gametype
 
     /** Constructor to setup the game UI and initialize components */
     public GameMain(String gameType) {
@@ -28,10 +29,15 @@ public class GameMain extends JPanel {
         board = new Board(gameType); // Initialize the game board
         //board.setupGame(gameType); // Dynamically setup the board
 
-        if(gameType.equals("Tic-Tac-Toe")) {
-            this.gameTypeWin = 3;
+        if(gameType.equals("Tic-Tac-Toe 3x3")) {
+            this.gameType = 2;
+            this.winCon = 3;
+        } else if(gameType.equals("Tic-Tac-Toe 5x5")) {
+            this.gameType = 3;
+            this.winCon = 3;
         } else if(gameType.equals("Connect Four")) {
-            this.gameTypeWin = 4;
+            this.gameType = 4;
+            this.winCon = 4;
         }
 
 
@@ -74,6 +80,12 @@ public class GameMain extends JPanel {
             return (player == Seed.CROSS) ? State.CROSS_WON : State.NOUGHT_WON;
         }
 
+        if (currentState == State.PLAYING) {
+            SoundEffect.EAT_FOOD.play();
+        } else {
+            SoundEffect.DIE.play();
+        }
+
         // Periksa apakah papan penuh (DRAW)
         for (int r = 0; r < Board.ROWS; r++) {
             for (int c = 0; c < Board.COLS; c++) {
@@ -92,11 +104,12 @@ public class GameMain extends JPanel {
         int col = mouseX / Cell.SIZE; // Hitung kolom
 
         // Debugging untuk memastikan perhitungan benar
-        System.out.println("MouseX: " + mouseX + ", MouseY: " + mouseY);
-        System.out.println("Klik di Baris: " + row + ", Kolom: " + col);
+        //System.out.println("MouseX: " + mouseX + ", MouseY: " + mouseY);
+        //System.out.println("Klik di Baris: " + row + ", Kolom: " + col);
 
-        if (currentState == State.PLAYING) {
+        if ((currentState == State.PLAYING) && (winCon == 3)) {
             // Validasi apakah klik berada dalam grid
+
             if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS) {
                 // Periksa apakah sel kosong
                 if (board.cells[row][col].content == Seed.NO_SEED) {
@@ -111,9 +124,43 @@ public class GameMain extends JPanel {
                     return; // Hentikan setelah simbol ditempatkan
                 }
             }
-        } else { // Jika game selesai
-            newGame(); // Mulai game baru
+        } else if ((currentState == State.PLAYING) && (winCon == 4)) {
+            if (col >= 0 && col < Board.COLS) {
+                // Look for an empty cell starting from the bottom row
+                for (int i = Board.ROWS -1; i >= 0; i--) {
+                    if (board.cells[i][col].content == Seed.NO_SEED) {
+                        board.cells[i][col].content = currentPlayer; // Make a move
+                        currentState = updateGame(currentPlayer, i, col); // update state
+                        // Switch player
+                        currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                        repaint();
+                        break;
+                    }
+                }
+            }
+
+        } else { // Jika game selesai;
+            Window[] windows = Window.getWindows();
+            for (Window window : windows) {
+                // Check if the window is an instance of JFrame
+                if (window instanceof JFrame) {
+                    // Dispose of the JFrame
+                    window.dispose();
+                    break; // Exit after disposing the first JFrame found
+                }
+            }
+
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame(TITLE);
+                frame.setContentPane(new GameSelector(frame, currentState, gameType)); // GameSelector directs to GameMain
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
         }
+
         SwingUtilities.invokeLater(() -> repaint()); // Redraw the board
         updateStatusBar();
     }
@@ -142,7 +189,7 @@ public class GameMain extends JPanel {
         for (int col = 0; col < Board.COLS; col++) {
             if (board.cells[rowSelected][col].content == player) {
                 count++;
-                if (count == gameTypeWin) return true; // 3 atau 4-in-a-row ditemukan
+                if (count == winCon) return true; // 3 atau 4-in-a-row ditemukan
             } else {
                 count = 0;
             }
@@ -153,7 +200,7 @@ public class GameMain extends JPanel {
         for (int row = 0; row < Board.ROWS; row++) {
             if (board.cells[row][colSelected].content == player) {
                 count++;
-                if (count == gameTypeWin) return true; // 3 atau 4-in-a-column ditemukan
+                if (count == winCon) return true; // 3 atau 4-in-a-column ditemukan
             } else {
                 count = 0;
             }
@@ -165,7 +212,7 @@ public class GameMain extends JPanel {
             int r = rowSelected + i, c = colSelected + i;
             if (r >= 0 && r < Board.ROWS && c >= 0 && c < Board.COLS && board.cells[r][c].content == player) {
                 count++;
-                if (count == gameTypeWin) return true;
+                if (count == winCon) return true;
             } else {
                 count = 0;
             }
@@ -177,7 +224,7 @@ public class GameMain extends JPanel {
             int r = rowSelected + i, c = colSelected - i;
             if (r >= 0 && r < Board.ROWS && c >= 0 && c < Board.COLS && board.cells[r][c].content == player) {
                 count++;
-                if (count == gameTypeWin) return true;
+                if (count == winCon) return true;
             } else {
                 count = 0;
             }
