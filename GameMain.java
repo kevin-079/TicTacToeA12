@@ -23,6 +23,15 @@ public class GameMain extends JPanel {
     private int gameType;        // for saving the type of gametype
     private int winCon;          // for saving the win condition of gametype
 
+    // Variabel untuk animasi garis kemenangan
+    private boolean hasWinningLine = false;
+    private int winningRowStart = -1, winningColStart = -1;
+    private int winningRowEnd = -1, winningColEnd = -1;
+    private int lineAnimationStep = 0;
+    private final int MAX_LINE_ANIMATION_STEPS = 20;
+    private final int LINE_ANIMATION_DELAY = 30;
+
+
     /** Constructor to setup the game UI and initialize components */
     public GameMain(String gameType) {
 
@@ -81,7 +90,7 @@ public class GameMain extends JPanel {
         }
 
         if (currentState == State.PLAYING) {
-            SoundEffect.EAT_FOOD.play();
+            SoundEffect.klik.play();
         } else {
             SoundEffect.DIE.play();
         }
@@ -121,6 +130,11 @@ public class GameMain extends JPanel {
                     currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
                     // Perbarui GUI
                     repaint();
+
+                    if (currentState == State.CROSS_WON || currentState == State.NOUGHT_WON) {
+                        startWinningLineAnimation();
+                    }
+
                     return; // Hentikan setelah simbol ditempatkan
                 }
             }
@@ -151,6 +165,7 @@ public class GameMain extends JPanel {
             }
 
 
+
             SwingUtilities.invokeLater(() -> {
                 JFrame frame = new JFrame(TITLE);
                 frame.setContentPane(new GameSelector(frame, currentState, gameType)); // GameSelector directs to GameMain
@@ -160,6 +175,7 @@ public class GameMain extends JPanel {
                 frame.setVisible(true);
             });
         }
+
 
         SwingUtilities.invokeLater(() -> repaint()); // Redraw the board
         updateStatusBar();
@@ -183,13 +199,18 @@ public class GameMain extends JPanel {
         }
     }
     private boolean hasWon(Seed player, int rowSelected, int colSelected) {
-        // Cek horizontal
-        boolean win = false;
+        // Horizontal check
         int count = 0;
         for (int col = 0; col < Board.COLS; col++) {
             if (board.cells[rowSelected][col].content == player) {
                 count++;
-                if (count == winCon) return true; // 3 atau 4-in-a-row ditemukan
+                if (count == winCon) {
+                    winningRowStart = rowSelected;
+                    winningColStart = col - winCon + 1;
+                    winningRowEnd = rowSelected;
+                    winningColEnd = col;
+                    return true; // 3 atau 4-in-a-row ditemukan
+                }
             } else {
                 count = 0;
             }
@@ -200,31 +221,49 @@ public class GameMain extends JPanel {
         for (int row = 0; row < Board.ROWS; row++) {
             if (board.cells[row][colSelected].content == player) {
                 count++;
-                if (count == winCon) return true; // 3 atau 4-in-a-column ditemukan
+                if (count == winCon) {
+                    winningRowStart = row - winCon + 1;
+                    winningColStart = colSelected;
+                    winningRowEnd = row;
+                    winningColEnd = colSelected;
+                    return true; // 3 atau 4-in-a-column ditemukan
+                }
             } else {
                 count = 0;
             }
         }
 
-        // Diagonal (top-left to bottom-right)
+        // Diagonal check (top-left to bottom-right)
         count = 0;
         for (int i = -3; i <= 3; i++) {
             int r = rowSelected + i, c = colSelected + i;
             if (r >= 0 && r < Board.ROWS && c >= 0 && c < Board.COLS && board.cells[r][c].content == player) {
                 count++;
-                if (count == winCon) return true;
+                if (count == winCon) {
+                    winningRowStart = r - winCon + 1;
+                    winningColStart = c - winCon + 1;
+                    winningRowEnd = r;
+                    winningColEnd = c;
+                    return true;
+                }
             } else {
                 count = 0;
             }
         }
 
-        // Anti-diagonal (top-right to bottom-left)
+        // Anti-diagonal check (top-right to bottom-left)
         count = 0;
         for (int i = -3; i <= 3; i++) {
             int r = rowSelected + i, c = colSelected - i;
             if (r >= 0 && r < Board.ROWS && c >= 0 && c < Board.COLS && board.cells[r][c].content == player) {
                 count++;
-                if (count == winCon) return true;
+                if (count == winCon) {
+                    winningRowStart = r - winCon + 1;
+                    winningColStart = c + winCon - 1;
+                    winningRowEnd = r;
+                    winningColEnd = c;
+                    return true;
+                }
             } else {
                 count = 0;
             }
@@ -232,6 +271,25 @@ public class GameMain extends JPanel {
 
         return false; // Tidak ada kondisi kemenangan ditemukan
     }
+
+    private void startWinningLineAnimation() {
+        hasWinningLine = true;
+        lineAnimationStep = 0;
+
+        Timer lineAnimationTimer = new Timer(LINE_ANIMATION_DELAY, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lineAnimationStep++;
+                if (lineAnimationStep >= MAX_LINE_ANIMATION_STEPS) {
+                    ((Timer) e.getSource()).stop();
+                }
+                repaint(); // Redraw the board with the current animation step
+            }
+        });
+        lineAnimationTimer.start();
+    }
+
+
 
 
     /** Custom painting codes on this JPanel */
@@ -241,6 +299,22 @@ public class GameMain extends JPanel {
         setBackground(COLOR_BG); // set its background color
 
         board.paint(g);  // ask the game board to paint itself
+
+        if (hasWinningLine) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(new Color(50, 255, 50)); // Neon green
+            g2d.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+            int xStart = winningColStart * Cell.SIZE + Cell.SIZE / 2;
+            int yStart = winningRowStart * Cell.SIZE + Cell.SIZE / 2;
+            int xEnd = winningColEnd * Cell.SIZE + Cell.SIZE / 2;
+            int yEnd = winningRowEnd * Cell.SIZE + Cell.SIZE / 2;
+
+            int xCurrent = xStart + (xEnd - xStart) * lineAnimationStep / MAX_LINE_ANIMATION_STEPS;
+            int yCurrent = yStart + (yEnd - yStart) * lineAnimationStep / MAX_LINE_ANIMATION_STEPS;
+
+            g2d.drawLine(xStart, yStart, xCurrent, yCurrent);
+        }
 
         // Print status-bar message
         if (currentState == State.PLAYING) {
