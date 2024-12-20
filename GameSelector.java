@@ -20,7 +20,7 @@ public class GameSelector extends JPanel {
         setBackground(new Color(60, 63, 65)); // Warna latar belakang
 
         // Judul Welcome Screen
-        JLabel welcomeLabel = new JLabel("Welcome to the Game!", JLabel.CENTER);
+        JLabel welcomeLabel = new JLabel("Welcome to the Game! (Game ini dinuat oleh A12: (B.K.Y))", JLabel.CENTER);
         welcomeLabel.setFont(new Font("Poppins", Font.BOLD, 32));
         welcomeLabel.setForeground(Color.WHITE);
         welcomeLabel.setBorder(BorderFactory.createEmptyBorder(30, 10, 30, 10)); // Padding
