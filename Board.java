@@ -6,16 +6,8 @@ public class Board {
     // Define named constants
     public static  int ROWS;  // ROWS x COLS cells
     public static  int COLS;
-    /*public void setupGame(String gameType) {
-        if (gameType.equals("Tic-Tac-Toe")) {
-            this.ROWS = 3;
-            this.COLS = 3;
-        } else if (gameType.equals("Connect Four")) {
-            this.ROWS = 6;
-            this.COLS = 7;
-        }
-        initGame();
-    }*/
+   
+    
 
     // Define named constants for drawing
     public static int CANVAS_WIDTH;  // the drawing canvas
