@@ -1,3 +1,13 @@
+/**
+ * ES234317-Algorithm and Data Structures
+ * Semester Ganjil, 2024/2025
+ * Group Capstone Project
+ * Group #12
+ * 1 - 5026231008 - Batara Haryo Yudanto
+ * 2 - 5026231079 - Kevin Nathanael
+ * 3 - 5026231089 - Yusuf Acala Sadurjaya Sri Krisna
+ */
+
 import java.awt.*;
 /**
  * The Cell class models each individual cell of the game board.
