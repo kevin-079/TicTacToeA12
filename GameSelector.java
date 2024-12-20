@@ -40,7 +40,21 @@ public class GameSelector extends JPanel {
             );
 
             if (response == 0) { // Mode 1P (vs AI)
-                new TTTGraphics(true); // true untuk AI
+                // Dialog untuk memilih tingkat kesulitan
+                String[] difficulties = {"Easy", "Hard"};
+                int difficultyResponse = JOptionPane.showOptionDialog(
+                        parentFrame,
+                        "Pilih tingkat kesulitan untuk AI:",
+                        "Tingkat Kesulitan",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        difficulties,
+                        "Easy"
+                );
+
+                String selectedDifficulty = (difficultyResponse == 0) ? "Easy" : "Hard";
+                new TTTGraphics(true, selectedDifficulty); // Menyesuaikan konstruktor baru
                 parentFrame.dispose();
             } else if (response == 1) { // Mode 2P (vs Player)
                 parentFrame.setContentPane(new tttOption(parentFrame)); // Masuk ke opsi 2P
@@ -72,9 +86,14 @@ public class GameSelector extends JPanel {
     }
 
     public GameSelector(JFrame parentFrame, State i, int game) {
+
+        SoundEffect.EXPLODE.play();
+
         // Set layout untuk end screen
         setLayout(new BorderLayout());
         setBackground(new Color(60, 63, 65)); // Warna latar belakang
+
+
 
         String message = "";
         if(i == State.DRAW) {
@@ -132,7 +151,7 @@ public class GameSelector extends JPanel {
         replayButton.setFocusPainted(false);
         replayButton.addActionListener((ActionEvent e) -> {
             if(game == 1) {
-                new TTTGraphics(true); // true untuk AI
+                new TTTGraphics(true, "Hard"); // Contoh default level Hard
                 parentFrame.dispose();
             } else if (game == 2) {
                 parentFrame.setContentPane(new GameMain("Tic-Tac-Toe 3x3"));
@@ -145,7 +164,6 @@ public class GameSelector extends JPanel {
             parentFrame.pack();
             parentFrame.setLocationRelativeTo(null);
             parentFrame.validate();
-
         });
 
         JButton exitButton = new JButton("Exit");
