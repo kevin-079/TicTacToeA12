@@ -1,4 +1,4 @@
-# TicTacToeA12
+# TicTacToe x Connect-4 by A12
 FP ASD(A) Kelompok 12: TicTacToe
 
 Anggota Kelompok:
